@@ -14,7 +14,7 @@ from flask_login import login_user
 from flask_login import logout_user
 
 from wiki.core import Processor
-from wiki.web.forms import EditorForm
+from wiki.web.forms import EditorForm, RegisterForm
 from wiki.web.forms import LoginForm
 from wiki.web.forms import SearchForm
 from wiki.web.forms import URLForm
@@ -139,6 +139,15 @@ def user_login():
         flash('Login successful.', 'success')
         return redirect(request.args.get("next") or url_for('wiki.index'))
     return render_template('login.html', form=form)
+
+
+@bp.route('/user/register/', methods=['GET', 'POST'])
+def user_register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        user = current_users.get_user(form.name.data)
+
+    return render_template('register.html', form=form)
 
 
 @bp.route('/user/logout/')

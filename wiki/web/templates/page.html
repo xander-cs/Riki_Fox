@@ -34,5 +34,17 @@
 	<li><a href="{{ url_for('wiki.edit', url=page.url) }}">Edit</a></li>
   <li><a href="{{ url_for('wiki.move', url=page.url) }}">Move</a></li>
   <li><a href="#confirmDelete" data-toggle="modal" class="text-error">Delete</a></li>
+  <li id="analyticsButton">View Analytics</li>
+
+  <script>
+    document.getElementById('analyticsButton').addEventListener('click', function() {
+      fetch('analytics.html')
+                .then(response => response.text())
+                .then(template => {
+                    document.body.insertAdjacentHTML('beforeend', template);
+                });
+
+    });
+</script>
 </ul>
 {% endblock sidebar %}

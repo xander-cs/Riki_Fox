@@ -5,8 +5,25 @@
 {% block content %}
 <form class="form form-inline" method="POST">
 	{{ form.hidden_tag() }}
-	{{ form.name(placeholder='Username') }}
-	{{ form.password(placeholder='Password') }}
+	<table>
+        <tr>
+            <td>
+                <p>Username:&emsp;</p>
+            </td>
+            <td>
+                <p>{{ form.name(placeholder='Username') }}</p>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <p>Password:</p>
+            </td>
+            <td>
+                <p>{{ form.name(placeholder='Password') }}</p>
+            </td>
+        </tr>
+    </table>
 	<input type="submit" class="btn btn-primary" value="Login">
     <a href="{{ url_for('wiki.user_register') }}">Register</a>
 </form>

@@ -8,10 +8,28 @@
     <table>
         <tr>
             <td>
+                <p>First Name:&emsp;</p>
+            </td>
+            <td>
+                <p>{{ form.fname(placeholder='First Name') }}</p>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <p>Last Name:&emsp;</p>
+            </td>
+            <td>
+                <p>{{ form.lname(placeholder='Last Name') }}</p>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
                 <p>Email Address:&emsp;</p>
             </td>
             <td>
-                <p>{{ form.name(placeholder='Email') }}</p>
+                <p>{{ form.email(placeholder='Email') }}</p>
             </td>
         </tr>
 
@@ -20,7 +38,7 @@
                 <p>Username:</p>
             </td>
             <td>
-                <p>{{ form.name(placeholder='Username') }}</p>
+                <p>{{ form.user_name(placeholder='Username') }}</p>
             </td>
         </tr>
 
@@ -29,7 +47,7 @@
                 <p>Password:</p>
             </td>
             <td>
-                <p>{{ form.name(placeholder='Password') }}</p>
+                <p>{{ form.password(placeholder='Password') }}</p>
             </td>
         </tr>
     </table>

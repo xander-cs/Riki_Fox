@@ -133,7 +133,7 @@ def search():
 def user_login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = current_users.get_user(form.name.data)
+        user = current_users.get_user(form.user_name.data)
         login_user(user)
         user.set('authenticated', True)
         flash('Login successful.', 'success')
@@ -145,7 +145,10 @@ def user_login():
 def user_register():
     form = RegisterForm()
     if form.validate_on_submit():
-        user = current_users.get_user(form.name.data)
+        user = current_users.get_user(form.user_name.data)
+        form.validate_name(user)
+        flash('Account created.', 'success')
+        return redirect(request.args.get("next") or url_for('wiki.user_login'))
 
     return render_template('register.html', form=form)
 

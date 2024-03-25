@@ -41,7 +41,7 @@ class EditorForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    name = StringField('', [InputRequired()])
+    user_name = StringField('', [InputRequired()])
     password = PasswordField('', [InputRequired()])
 
     def validate_name(form, field):
@@ -50,7 +50,7 @@ class LoginForm(FlaskForm):
             raise ValidationError('This username does not exist.')
 
     def validate_password(form, field):
-        user = current_users.get_user(form.name.data)
+        user = current_users.get_user(form.user_name.data)
         if not user:
             return
         if not user.check_password(field.data):
@@ -58,10 +58,15 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    name = StringField('', [InputRequired()])
+    fname = StringField('', [InputRequired()])
+    lname = StringField('', [InputRequired()])
+    email = StringField('', [InputRequired()])
+    user_name = StringField('', [InputRequired()])
     password = PasswordField('', [InputRequired()])
 
     def validate_name(form, field):
-        user = current_users.get_user(field.data)
+        user = current_users.get_user(form.user_name    .data)
         if user:
             raise ValidationError('This username have already exist.')
+        else:
+            current_users.add_user(form.user_name.data, form.password.data)

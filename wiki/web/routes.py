@@ -207,8 +207,9 @@ def track_page_view():
 
     cursor.execute('SELECT * FROM page_views WHERE page=?', (page,))
     result = cursor.fetchone()
+
     if result:
-        views = result[1] + 1
+        views = result[2] + 1
         cursor.execute('UPDATE page_views SET views=? WHERE page=?', (views, page))
         page_view_id = result[0]
     else:

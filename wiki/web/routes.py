@@ -22,6 +22,9 @@ from wiki.web import current_wiki
 from wiki.web import current_users
 from wiki.web.user import protect
 
+from datetime import datetime
+import sqlite3
+
 
 bp = Blueprint('wiki', __name__)
 
@@ -180,3 +183,42 @@ def user_delete(user_id):
 def page_not_found(error):
     return render_template('404.html'), 404
 
+
+
+"""
+    Analytics
+    ~~~~~~~~~
+"""
+
+@bp.route('/track_page_view', methods=['POST'])
+def track_page_view():
+    database = sqlite3.connect('database.db')
+    cursor = database.cursor()
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS page_views
+                   (id INTEGER PRIMARY KEY, page TEXT, views INTEGER)''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS timestamps
+                   (id INTEGER PRIMARY KEY, page_view_id INTEGER,
+                   timestamp TEXT, FOREIGN KEY(page_view_id) REFERENCES page_views(id))''')
+
+
+    data = request.json
+    page = data.get('page')    
+
+    cursor.execute('SELECT * FROM page_views WHERE page=?', (page,))
+    result = cursor.fetchone()
+    if result:
+        views = result[1] + 1
+        cursor.execute('UPDATE page_views SET views=? WHERE page=?', (views, page))
+        page_view_id = result[0]
+    else:
+        cursor.execute('INSERT INTO page_views (page, views) VALUES (?, 1)', (page,))
+        page_view_id = cursor.lastrowid
+    
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    cursor.execute('INSERT INTO timestamps (page_view_id, timestamp) VALUES (?, ?)', (page_view_id, timestamp))
+    
+
+    database.commit()
+
+    return 'Page view tracked successfully'

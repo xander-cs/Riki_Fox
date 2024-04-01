@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.data.fname }}'s Profile{% endblock title %}
+
+
+{% block content %}
+    <table>
+        <tr>
+            <td>
+                <p>Full Name:</p>
+            </td>
+            <td>
+                <p>{{ user.data.fname }} {{ user.data.lname }}</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>Email Address:</p>
+            </td>
+            <td>
+                <p>{{ user.data.email }}</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>Username:</p>
+            </td>
+            <td>
+                <p>{{ user.username }}</p>
+            </td>
+        </tr>
+        <tr>
+            <p>
+            {% if user.last_seen %}
+                <p>Last seen on: {{ user.last_seen }}</p>
+            {% endif %}
+            </p>
+        </tr>
+    </table>
+{% endblock %}
+
+{#{% block sidebar %}#}
+{#<h3>Actions</h3>#}
+{#<ul class="nav nav-tabs nav-stacked">#}
+{#    <li>#}
+{#        <a href="{{ url_for('wiki.edit', url=page.url) }}">Edit</a>#}
+{#    </li>#}
+{#    <li>#}
+{#        <a href="#confirmDelete" data-toggle="modal" class="text-error">Delete</a>#}
+{#    </li>#}
+{#</ul>#}
+{#{% endblock sidebar %}#}

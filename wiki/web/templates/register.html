@@ -38,7 +38,7 @@
                 <p>Username:</p>
             </td>
             <td>
-                <p>{{ form.user_name(placeholder='Username') }}</p>
+                <p>{{ form.username(placeholder='Username') }}</p>
             </td>
         </tr>
 
@@ -52,8 +52,9 @@
         </tr>
     </table>
 
-	<input type="submit" class="btn btn-primary" value="Register">
-    <a href="{{ url_for('wiki.user_login') }}">Login</a>
-
+	<p>
+        {{ form.submit() }}
+        <a href="{{ url_for('wiki.user_login') }}">Login</a>
+    </p>
 </form>
 {% endblock content %}

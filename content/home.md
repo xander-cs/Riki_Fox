@@ -1,5 +1,5 @@
-title: home
+title: Welcome back, user.data.fname
 tags: 
 
-# Home Page for Khue
-something about personal page
+# Home Page
+something about a personal page

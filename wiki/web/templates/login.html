@@ -11,7 +11,14 @@
                 <p>Username:&emsp;</p>
             </td>
             <td>
-                <p>{{ form.user_name(placeholder='Username') }}</p>
+                <p>{{ form.username(placeholder='Username') }}</p>
+            </td>
+            <td>
+                <p>
+                    {% for error in form.username.errors %}
+                        flash
+                    {% endfor %}
+                </p>
             </td>
         </tr>
 
@@ -21,6 +28,13 @@
             </td>
             <td>
                 <p>{{ form.password(placeholder='Password') }}</p>
+            </td>
+            <td>
+                <p>
+                    {% for error in form.password.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
             </td>
         </tr>
     </table>

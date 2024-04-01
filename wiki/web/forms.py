@@ -7,6 +7,7 @@ from wtforms import BooleanField
 from wtforms import StringField
 from wtforms import TextAreaField
 from wtforms import PasswordField
+from wtforms.fields.simple import SubmitField
 from wtforms.validators import InputRequired
 from wtforms.validators import ValidationError
 
@@ -41,7 +42,7 @@ class EditorForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    user_name = StringField('', [InputRequired()])
+    username = StringField('', [InputRequired()])
     password = PasswordField('', [InputRequired()])
 
     def validate_name(form, field):
@@ -50,7 +51,7 @@ class LoginForm(FlaskForm):
             raise ValidationError('This username does not exist.')
 
     def validate_password(form, field):
-        user = current_users.get_user(form.user_name.data)
+        user = current_users.get_user(form.username.data)
         if not user:
             return
         if not user.check_password(field.data):
@@ -58,15 +59,16 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    fname = StringField('', [InputRequired()])
-    lname = StringField('', [InputRequired()])
-    email = StringField('', [InputRequired()])
-    user_name = StringField('', [InputRequired()])
-    password = PasswordField('', [InputRequired()])
+    fname = StringField('fname', [InputRequired()])
+    lname = StringField('lname', [InputRequired()])
+    email = StringField('email', [InputRequired()])
+    username = StringField('user_name', [InputRequired()])
+    password = PasswordField('password', [InputRequired()])
+    submit = SubmitField('Register')
 
     def validate_name(form, field):
-        user = current_users.get_user(form.user_name    .data)
-        if user:
-            raise ValidationError('This username have already exist.')
+        user = current_users.get_user(form.username.data)
+        if user is not None:
+            raise ValidationError('Please use a different username.')
         else:
-            current_users.add_user(form.user_name.data, form.password.data)
+            current_users.add_user(form.fname.data, form.lname.data, form.email.data, form.username.data, form.password.data)

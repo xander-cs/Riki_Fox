@@ -2,6 +2,8 @@
     Routes
     ~~~~~~
 """
+from datetime import datetime, timezone
+
 from flask import Blueprint
 from flask import flash
 from flask import redirect
@@ -133,11 +135,14 @@ def search():
 def user_login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = current_users.get_user(form.user_name.data)
-        login_user(user)
-        user.set('authenticated', True)
-        flash('Login successful.', 'success')
-        return redirect(request.args.get("next") or url_for('wiki.index'))
+        user = current_users.get_user(form.username.data)
+        if (user is None) or (not user.check_password(form.password.data)):
+            flash("Invalid username or password.", 'fail')
+        else:
+            login_user(user)
+            user.set('authenticated', True)
+            flash('Login successful.', 'success')
+            return redirect(url_for('wiki.home'))
     return render_template('login.html', form=form)
 
 
@@ -145,10 +150,10 @@ def user_login():
 def user_register():
     form = RegisterForm()
     if form.validate_on_submit():
-        user = current_users.get_user(form.user_name.data)
+        user = current_users.get_user(form.username.data)
         form.validate_name(user)
         flash('Account created.', 'success')
-        return redirect(request.args.get("next") or url_for('wiki.user_login'))
+        return redirect(url_for('wiki.user_login'))
 
     return render_template('register.html', form=form)
 
@@ -162,9 +167,11 @@ def user_logout():
     return redirect(url_for('wiki.index'))
 
 
-@bp.route('/user/')
-def user_index():
-    pass
+@bp.route('/user/<username>')
+@login_required
+def user_profile(username):
+    user = current_users.get_user(username)
+    return render_template('user.html', user=user)
 
 
 @bp.route('/user/create/')

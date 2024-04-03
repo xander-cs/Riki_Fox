@@ -16,7 +16,7 @@ from flask_login import login_user
 from flask_login import logout_user
 
 from wiki.core import Processor
-from wiki.web.forms import EditorForm, RegisterForm
+from wiki.web.forms import EditorForm, RegisterForm, EditProfileForm
 from wiki.web.forms import LoginForm
 from wiki.web.forms import SearchForm
 from wiki.web.forms import URLForm
@@ -136,13 +136,12 @@ def user_login():
     form = LoginForm()
     if form.validate_on_submit():
         user = current_users.get_user(form.username.data)
-        if (user is None) or (not user.check_password(form.password.data)):
-            flash("Invalid username or password.", 'fail')
-        else:
-            login_user(user)
-            user.set('authenticated', True)
-            flash('Login successful.', 'success')
-            return redirect(url_for('wiki.home'))
+        form.validate_username(user)
+        form.validate_password(form.password.data)
+        login_user(user)
+        user.set('authenticated', True)
+        flash('Login successful.', 'success')
+        return redirect(url_for('wiki.home'))
     return render_template('login.html', form=form)
 
 
@@ -151,7 +150,6 @@ def user_register():
     form = RegisterForm()
     if form.validate_on_submit():
         user = current_users.get_user(form.username.data)
-        form.validate_name(user)
         flash('Account created.', 'success')
         return redirect(url_for('wiki.user_login'))
 
@@ -172,6 +170,30 @@ def user_logout():
 def user_profile(username):
     user = current_users.get_user(username)
     return render_template('user.html', user=user)
+
+
+@bp.route('/user/edit_profile/', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        current_user.set('fname', form.fname.data)
+        current_user.set('lname', form.lname.data)
+        current_user.set('email', form.email.data)
+        current_user.set('phone', form.phone.data)
+        if form.username.data is not None:
+            current_user.username = form.username.data
+        if form.password.data is not None:
+            current_user.set('password', form.password.data)
+
+        flash("Your profile has been updated.", "success")
+        return redirect(url_for('wiki.user_profile', username=current_user.username))
+    elif request.method == 'GET':
+        form.fname.data = current_user.get('fname')
+        form.lname.data = current_user.get('lname')
+        form.email.data = current_user.get('email')
+        form.phone.data = current_user.get('phone')
+    return render_template('edit_profile.html', form=form)
 
 
 @bp.route('/user/create/')

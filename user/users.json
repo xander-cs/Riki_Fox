@@ -3,10 +3,33 @@
     "fname": "Triet",
     "lname": "Luong",
     "email": "luongt1@nku.edu",
+    "phone": "8598667353",
+    "active": true,
+    "roles": [],
+    "authentication_method": "cleartext",
+    "authenticated": true,
+    "password": "123"
+  },
+  "dinhk1": {
+    "fname": "Khue",
+    "lname": "Dinh",
+    "email": "dinhk11@nku.edu",
+    "phone": "",
     "active": true,
     "roles": [],
     "authentication_method": "cleartext",
     "authenticated": true,
     "password": "1234"
+  },
+  "luongt": {
+    "fname": "Triet",
+    "lname": "Luong",
+    "email": "luongt1@nku.edu",
+    "phone": "8598667353",
+    "active": true,
+    "roles": [],
+    "authentication_method": "cleartext",
+    "authenticated": true,
+    "password": ""
   }
 }

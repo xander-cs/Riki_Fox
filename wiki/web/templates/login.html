@@ -16,7 +16,7 @@
             <td>
                 <p>
                     {% for error in form.username.errors %}
-                        flash
+                    <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}
                 </p>
             </td>

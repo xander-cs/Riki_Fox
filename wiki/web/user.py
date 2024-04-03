@@ -6,6 +6,7 @@ import os
 import json
 import binascii
 import hashlib
+from hashlib import md5
 from datetime import datetime, timezone
 from functools import wraps
 
@@ -31,7 +32,7 @@ class UserManager(object):
             f.write(json.dumps(data, indent=2))
 
     def add_user(self, fname, lname, email, username, password,
-                 active=True, roles=[], authentication_method=None):
+                 phone=None, active=True, roles=[], authentication_method=None):
         users = self.read()
         if users.get(username):
             return False
@@ -41,6 +42,7 @@ class UserManager(object):
             'fname': fname,
             'lname': lname,
             'email': email,
+            'phone': phone,
             'active': active,
             'roles': roles,
             'authentication_method': authentication_method,
@@ -108,6 +110,9 @@ class User(object):
     def get_id(self):
         return self.username
 
+    def check_username(self, username):
+        return self.username == username
+
     def check_password(self, password):
         """Return True, return False, or raise NotImplementedError if the
         authentication_method is missing or unknown."""
@@ -122,6 +127,10 @@ class User(object):
         else:
             raise NotImplementedError(authentication_method)
         return result
+
+    def avatar(self, size):
+        digest = md5(self.data["email"].lower().encode('utf-8')).hexdigest()
+        return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
 
 
 def get_default_authentication_method():

@@ -2,6 +2,16 @@
     Forms
     ~~~~~
 """
+from flask import Blueprint
+from flask import flash
+from flask import redirect
+from flask import render_template
+from flask import request
+from flask import url_for
+from flask_login import current_user
+from flask_login import login_required
+from flask_login import login_user
+from flask_login import logout_user
 from flask_wtf import FlaskForm
 from wtforms import BooleanField
 from wtforms import StringField
@@ -14,6 +24,7 @@ from wtforms.validators import ValidationError
 from wiki.core import clean_url
 from wiki.web import current_wiki
 from wiki.web import current_users
+
 
 
 class URLForm(FlaskForm):
@@ -45,16 +56,18 @@ class LoginForm(FlaskForm):
     username = StringField('', [InputRequired()])
     password = PasswordField('', [InputRequired()])
 
-    def validate_name(form, field):
-        user = current_users.get_user(field.data)
-        if not user:
+    def validate_username(form, field):
+        user = current_users.get_user(form.username.data)
+        if user is None:
             raise ValidationError('This username does not exist.')
+        else:
+            return
 
     def validate_password(form, field):
         user = current_users.get_user(form.username.data)
         if not user:
             return
-        if not user.check_password(field.data):
+        if not user.check_password(form.password.data):
             raise ValidationError('Username and password do not match.')
 
 
@@ -66,9 +79,24 @@ class RegisterForm(FlaskForm):
     password = PasswordField('password', [InputRequired()])
     submit = SubmitField('Register')
 
-    def validate_name(form, field):
+    def validate_username(form, field):
         user = current_users.get_user(form.username.data)
         if user is not None:
-            raise ValidationError('Please use a different username.')
+            raise ValidationError('This username is already exist.')
         else:
             current_users.add_user(form.fname.data, form.lname.data, form.email.data, form.username.data, form.password.data)
+
+
+class EditProfileForm(FlaskForm):
+    fname = StringField('First Name', [InputRequired()])
+    lname = StringField('Last Name', [InputRequired()])
+    email = StringField('Email Addresses', [InputRequired()])
+    phone = StringField('Phone Number', [InputRequired()])
+    username = StringField('Username')
+    password = PasswordField('Password')
+    submit = SubmitField('Submit')
+
+    def validate_username(form, field):
+        user = current_users.get_user(current_user.username)
+        if user is not None:
+            raise ValidationError('This username is already exist.')

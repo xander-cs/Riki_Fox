@@ -23,7 +23,29 @@
       <h3>Analytics for: {{ page.title }}</h3>
     </div>
     <div class="modal-body">
-      <p>test</p>
+      <script>
+        // Fetch page view
+        fetch('/get_view_count', {
+          method: 'POST',
+          body: JSON.stringify({ page: window.location.pathname }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+          if (data.error) {
+            console.error(data.error);
+          } else {
+            document.getElementById('viewCount').innerText = ("Views: " + data.view_count);
+          }
+        })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      </script>
+
+      <p id="viewCount">test</p>
     </div>
     <div class="modal-footer">
     </div>
@@ -50,19 +72,3 @@
     <li><a href="#analytics" data-toggle="modal">View Analytics</a></li>
   </ul>
 {% endblock sidebar %}
-
-<!-- <script>
-  document.getElementById('analyticsButton').addEventListener('click', function(event)
-  {
-    event.preventDefault();
-
-    fetch('/analytics.html', {
-      method: 'POST'
-    })
-      .then(response => response.text())
-      .then(template => {
-        document.getElementById('analytics').innerHTML = template;
-      });
-
-  });
-</script> -->

@@ -12,6 +12,7 @@ from flask_login import current_user
 from flask_login import login_required
 from flask_login import login_user
 from flask_login import logout_user
+from flask import jsonify
 
 from wiki.core import Processor
 from wiki.web.forms import EditorForm
@@ -223,3 +224,21 @@ def track_page_view():
     database.commit()
 
     return 'Page view tracked successfully'
+
+@bp.route('/get_view_count', methods=['POST'])
+def get_view_count():
+    database = sqlite3.connect('database.db')
+    cursor = database.cursor()
+
+    data = request.json
+    page = data.get('page')
+    
+    cursor.execute('SELECT views FROM page_views WHERE page=?', (page,))
+    result = cursor.fetchone()
+    
+    
+    if result:
+        view_count = result[0]
+        return jsonify({'view_count': view_count})
+    else:
+        return jsonify({'error': 'Page not found'}), 404

@@ -1,15 +1,4 @@
 {
-  "luongt1": {
-    "fname": "Triet",
-    "lname": "Luong",
-    "email": "luongt1@nku.edu",
-    "phone": "8598667353",
-    "active": true,
-    "roles": [],
-    "authentication_method": "cleartext",
-    "authenticated": true,
-    "password": "123"
-  },
   "dinhk1": {
     "fname": "Khue",
     "lname": "Dinh",
@@ -21,7 +10,7 @@
     "authenticated": true,
     "password": "1234"
   },
-  "luongt": {
+  "luongt1": {
     "fname": "Triet",
     "lname": "Luong",
     "email": "luongt1@nku.edu",
@@ -30,6 +19,6 @@
     "roles": [],
     "authentication_method": "cleartext",
     "authenticated": true,
-    "password": ""
+    "password": "1234"
   }
 }

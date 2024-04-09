@@ -138,10 +138,14 @@ def user_login():
         user = current_users.get_user(form.username.data)
         form.validate_username(user)
         form.validate_password(form.password.data)
-        login_user(user)
-        user.set('authenticated', True)
-        flash('Login successful.', 'success')
-        return redirect(url_for('wiki.home'))
+        if user.is_active():
+            login_user(user)
+            user.set('authenticated', True)
+            flash('Login successful.', 'success')
+            return redirect(url_for('wiki.home'))
+        else:
+            flash('Login Failed: Invalid Username or Password.', 'danger')
+            return render_template('login.html', form=form)
     return render_template('login.html', form=form)
 
 
@@ -181,9 +185,14 @@ def edit_profile():
         current_user.set('lname', form.lname.data)
         current_user.set('email', form.email.data)
         current_user.set('phone', form.phone.data)
-        if form.username.data is not None:
+        if form.username.data != "":
+            form.validate_username(current_user)
+            current_user.set('active', False)
+            old_username = current_user.username
             current_user.username = form.username.data
-        if form.password.data is not None:
+            current_user.set('active', True)
+            current_users.delete_user(old_username)
+        if form.password.data != "":
             current_user.set('password', form.password.data)
 
         flash("Your profile has been updated.", "success")

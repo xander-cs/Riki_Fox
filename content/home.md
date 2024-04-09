@@ -1,5 +1,5 @@
-title: Welcome back, user.data.fname
+title: Welcome back!
 tags: 
 
 # Home Page
-something about a personal page
+something about home page

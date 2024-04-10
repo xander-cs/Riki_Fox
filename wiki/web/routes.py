@@ -2,6 +2,8 @@
     Routes
     ~~~~~~
 """
+from datetime import datetime, timezone
+
 from flask import Blueprint
 from flask import flash
 from flask import redirect
@@ -14,7 +16,7 @@ from flask_login import login_user
 from flask_login import logout_user
 
 from wiki.core import Processor
-from wiki.web.forms import EditorForm, RegisterForm
+from wiki.web.forms import EditorForm, RegisterForm, EditProfileForm
 from wiki.web.forms import LoginForm
 from wiki.web.forms import SearchForm
 from wiki.web.forms import URLForm
@@ -133,11 +135,17 @@ def search():
 def user_login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = current_users.get_user(form.name.data)
-        login_user(user)
-        user.set('authenticated', True)
-        flash('Login successful.', 'success')
-        return redirect(request.args.get("next") or url_for('wiki.index'))
+        user = current_users.get_user(form.username.data)
+        form.validate_username(user)
+        form.validate_password(form.password.data)
+        if user.is_active():
+            login_user(user)
+            user.set('authenticated', True)
+            flash('Login successful.', 'success')
+            return redirect(url_for('wiki.home'))
+        else:
+            flash('Login Failed: Invalid Username or Password.', 'danger')
+            return render_template('login.html', form=form)
     return render_template('login.html', form=form)
 
 
@@ -145,7 +153,9 @@ def user_login():
 def user_register():
     form = RegisterForm()
     if form.validate_on_submit():
-        user = current_users.get_user(form.name.data)
+        user = current_users.get_user(form.username.data)
+        flash('Account created.', 'success')
+        return redirect(url_for('wiki.user_login'))
 
     return render_template('register.html', form=form)
 
@@ -159,9 +169,40 @@ def user_logout():
     return redirect(url_for('wiki.index'))
 
 
-@bp.route('/user/')
-def user_index():
-    pass
+@bp.route('/user/<username>')
+@login_required
+def user_profile(username):
+    user = current_users.get_user(username)
+    return render_template('user.html', user=user)
+
+
+@bp.route('/user/edit_profile/', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        current_user.set('fname', form.fname.data)
+        current_user.set('lname', form.lname.data)
+        current_user.set('email', form.email.data)
+        current_user.set('phone', form.phone.data)
+        if form.username.data != "":
+            form.validate_username(current_user)
+            current_user.set('active', False)
+            old_username = current_user.username
+            current_user.username = form.username.data
+            current_user.set('active', True)
+            current_users.delete_user(old_username)
+        if form.password.data != "":
+            current_user.set('password', form.password.data)
+
+        flash("Your profile has been updated.", "success")
+        return redirect(url_for('wiki.user_profile', username=current_user.username))
+    elif request.method == 'GET':
+        form.fname.data = current_user.get('fname')
+        form.lname.data = current_user.get('lname')
+        form.email.data = current_user.get('email')
+        form.phone.data = current_user.get('phone')
+    return render_template('edit_profile.html', form=form)
 
 
 @bp.route('/user/create/')

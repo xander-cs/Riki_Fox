@@ -23,7 +23,7 @@ from wiki.web import current_wiki
 from wiki.web import current_users
 from wiki.web.user import protect
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import sqlite3
 
 
@@ -217,13 +217,14 @@ def track_page_view():
         cursor.execute('INSERT INTO page_views (page, views) VALUES (?, 1)', (page,))
         page_view_id = cursor.lastrowid
     
-    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    timestamp = datetime.now().strftime('%Y-%m-%d')
     cursor.execute('INSERT INTO timestamps (page_view_id, timestamp) VALUES (?, ?)', (page_view_id, timestamp))
     
 
     database.commit()
 
     return 'Page view tracked successfully'
+
 
 @bp.route('/get_view_count', methods=['POST'])
 def get_view_count():
@@ -236,9 +237,28 @@ def get_view_count():
     cursor.execute('SELECT views FROM page_views WHERE page=?', (page,))
     result = cursor.fetchone()
     
-    
     if result:
         view_count = result[0]
         return jsonify({'view_count': view_count})
     else:
         return jsonify({'error': 'Page not found'}), 404
+
+    
+@bp.route('/get_timestamps', methods=['POST'])
+def get_timestamps():
+    database = sqlite3.connect('database.db')
+    cursor = database.cursor()
+
+    data = request.json
+    page = data.get('page')
+
+    cursor.execute('SELECT timestamp, COUNT(*) FROM timestamps JOIN page_views ON timestamps.page_view_id = page_views.id WHERE page_views.page = ? GROUP BY strftime("%Y-%m-%d", timestamp)', (page,))
+
+    data = []
+    for row in cursor.fetchall():
+        data.append({
+            'day': row[0],
+            'count': row[1]
+        })
+
+    return jsonify(data)

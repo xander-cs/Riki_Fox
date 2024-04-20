@@ -197,10 +197,10 @@ def track_page_view():
     cursor = database.cursor()
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS page_views
-                   (id INTEGER PRIMARY KEY, page TEXT, views INTEGER)''')
+                (id INTEGER PRIMARY KEY, page TEXT, views INTEGER)''')
     cursor.execute('''CREATE TABLE IF NOT EXISTS timestamps
-                   (id INTEGER PRIMARY KEY, page_view_id INTEGER,
-                   timestamp TEXT, FOREIGN KEY(page_view_id) REFERENCES page_views(id))''')
+                (id INTEGER PRIMARY KEY, page_view_id INTEGER,
+                timestamp TEXT, FOREIGN KEY(page_view_id) REFERENCES page_views(id))''')
 
 
     data = request.json

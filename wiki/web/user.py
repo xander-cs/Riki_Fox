@@ -6,6 +6,8 @@ import os
 import json
 import binascii
 import hashlib
+from hashlib import md5
+from datetime import datetime, timezone
 from functools import wraps
 
 from flask import current_app
@@ -29,18 +31,22 @@ class UserManager(object):
         with open(self.file, 'w') as f:
             f.write(json.dumps(data, indent=2))
 
-    def add_user(self, name, password,
-                 active=True, roles=[], authentication_method=None):
+    def add_user(self, fname, lname, email, username, password,
+                 phone=None, active=True, roles=[], authentication_method=None):
         users = self.read()
-        if users.get(name):
+        if users.get(username):
             return False
         if authentication_method is None:
             authentication_method = get_default_authentication_method()
         new_user = {
+            'fname': fname,
+            'lname': lname,
+            'email': email,
+            'phone': phone,
             'active': active,
             'roles': roles,
             'authentication_method': authentication_method,
-            'authenticated': False
+            'authenticated': False,
         }
         # Currently we have only two authentication_methods: cleartext and
         # hash. If we get more authentication_methods, we will need to go to a
@@ -51,35 +57,35 @@ class UserManager(object):
             new_user['password'] = password
         else:
             raise NotImplementedError(authentication_method)
-        users[name] = new_user
+        users[username] = new_user
         self.write(users)
-        userdata = users.get(name)
-        return User(self, name, userdata)
+        userdata = users.get(username)
+        return User(self, username, userdata)
 
-    def get_user(self, name):
+    def get_user(self, username):
         users = self.read()
-        userdata = users.get(name)
+        userdata = users.get(username)
         if not userdata:
             return None
-        return User(self, name, userdata)
+        return User(self, username, userdata)
 
-    def delete_user(self, name):
+    def delete_user(self, username):
         users = self.read()
-        if not users.pop(name, False):
+        if not users.pop(username, False):
             return False
         self.write(users)
         return True
 
-    def update(self, name, userdata):
+    def update(self, username, userdata):
         data = self.read()
-        data[name] = userdata
+        data[username] = userdata
         self.write(data)
 
 
 class User(object):
-    def __init__(self, manager, name, data):
+    def __init__(self, manager, username, data):
         self.manager = manager
-        self.name = name
+        self.username = username
         self.data = data
 
     def get(self, option):
@@ -90,7 +96,7 @@ class User(object):
         self.save()
 
     def save(self):
-        self.manager.update(self.name, self.data)
+        self.manager.update(self.username, self.data)
 
     def is_authenticated(self):
         return self.data.get('authenticated')
@@ -102,7 +108,10 @@ class User(object):
         return False
 
     def get_id(self):
-        return self.name
+        return self.username
+
+    def check_username(self, username):
+        return self.username == username
 
     def check_password(self, password):
         """Return True, return False, or raise NotImplementedError if the
@@ -118,6 +127,10 @@ class User(object):
         else:
             raise NotImplementedError(authentication_method)
         return result
+
+    def avatar(self, size):
+        digest = md5(self.data["email"].lower().encode('utf-8')).hexdigest()
+        return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
 
 
 def get_default_authentication_method():

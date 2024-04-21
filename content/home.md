@@ -1,6 +1,5 @@
-
-title: Home
+title: Welcome back!
 tags: 
 
-Welcome to Antopia, your gateway to the ant kingdom
-
+# Home Page
+something about home page

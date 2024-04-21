@@ -1,23 +1,12 @@
 {% from "helpers.html" import input %}
 <!DOCTYPE html>
 <html>
-	<head>
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.css') }}">
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='responsive.css') }}">
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='pygments.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='user.css') }}">
-		
-		<script>
-			// Track page view
-			fetch('/track_page_view', {
-				method: 'POST',
-				body: JSON.stringify({ page: window.location.pathname }),
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
-		</script>
-	</head>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='responsive.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='pygments.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='user.css') }}">
+    </head>
 
     <body>
     <div class="navbar navbar-fixed-top">

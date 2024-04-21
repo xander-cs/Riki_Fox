@@ -1,24 +1,44 @@
 {
-  "dinhk1": {
-    "fname": "Khue",
-    "lname": "Dinh",
-    "email": "dinhk11@nku.edu",
-    "phone": "",
+  "name": {
     "active": true,
-    "roles": [],
     "authentication_method": "cleartext",
+    "password": "1234",
     "authenticated": true,
-    "password": "1234"
+    "roles": []
   },
-  "luongt1": {
-    "fname": "Triet",
-    "lname": "Luong",
-    "email": "luongt1@nku.edu",
-    "phone": "8598667353",
+  "sam": {
     "active": true,
-    "roles": [],
     "authentication_method": "cleartext",
+    "password": "1234",
     "authenticated": true,
-    "password": "1234"
+    "roles": []
+  },
+  "ben": {
+    "active": true,
+    "authentication_method": "cleartext",
+    "password": "1234",
+    "authenticated": true,
+    "roles": []
+  },
+  "alex": {
+    "active": true,
+    "authentication_method": "cleartext",
+    "password": "1234",
+    "authenticated": true,
+    "roles": []
+  },
+  "xander": {
+    "active": true,
+    "authentication_method": "cleartext",
+    "password": "1234",
+    "authenticated": true,
+    "roles": []
+  },
+  "triet": {
+    "active": true,
+    "authentication_method": "cleartext",
+    "password": "1234",
+    "authenticated": true,
+    "roles": []
   }
 }
